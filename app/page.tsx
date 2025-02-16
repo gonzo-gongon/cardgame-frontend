@@ -1,6 +1,36 @@
 import Image from "next/image";
+import { graphql } from 'gql.tada';
+import { apolloClient } from './apollo-client';
 
-export default function Home() {
+const cardsQuery = graphql(`
+  query cardsQuery($ids: [ID!]!) {
+    cards(ids: $ids) {
+      id
+      name
+      text
+    }
+  }
+`);
+console.log(cardsQuery);
+
+export default async function Home() {
+  const {
+    data,
+  } = await apolloClient.query({
+    query: cardsQuery,
+    variables: {
+      ids: [
+        '01947e48-615b-742f-a1c3-dd91cdf79094',
+        '01948958-b275-7322-8aba-580c5b2252c6',
+        '01948959-d112-76aa-ad74-943302e4cf84',
+      ],
+    },
+  });
+  
+  const { cards } = data;
+  
+  console.log(cards);
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
